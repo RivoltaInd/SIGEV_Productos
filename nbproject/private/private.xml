@@ -6,6 +6,9 @@
             <file>file:/C:/Users/stiiv/OneDrive/Documents/NetBeansProjects/SIGEV_Productos/src/com/sigev/main/Main.java</file>
             <file>file:/C:/Users/stiiv/OneDrive/Documents/NetBeansProjects/SIGEV_Productos/src/com/sigev/modelo/Producto.java</file>
             <file>file:/C:/Users/stiiv/OneDrive/Documents/NetBeansProjects/SIGEV_Productos/src/com/sigev/util/ConexionBD.java</file>
+            <file>file:/C:/Users/stiiv/OneDrive/Documents/NetBeansProjects/SIGEV_Productos/src/com/sigev/dao/ProductoDAO.java</file>
+            <file>file:/C:/Users/stiiv/OneDrive/Documents/NetBeansProjects/SIGEV_Productos/src/com/sigev/modelo/Venta.java</file>
+            <file>file:/C:/Users/stiiv/OneDrive/Documents/NetBeansProjects/SIGEV_Productos/src/com/sigev/dao/VentaDAO.java</file>
         </group>
     </open-files>
 </project-private>
