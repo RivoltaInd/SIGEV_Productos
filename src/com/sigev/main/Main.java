@@ -7,6 +7,11 @@ import com.sigev.modelo.Venta;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Prueba de los módulos Productos y Ventas.
+ * Todas las operaciones se hacen sobre un producto de prueba que se
+ * inserta al inicio y se elimina al final, para no tocar los datos reales.
+ */
 public class Main {
 
     public static void main(String[] args) {
@@ -15,10 +20,14 @@ public class Main {
         VentaDAO ventaDAO = new VentaDAO();
 
         // ================= MÓDULO PRODUCTOS =================
-        // 1. Insertar un nuevo producto
-        Producto nuevo = new Producto("Destornillador estrella 6\"", "Herramientas", 9500.0, 25);
-        boolean insertado = productoDAO.insertarProducto(nuevo);
-        System.out.println("¿Producto insertado?: " + insertado);
+        // 1. Insertar un producto de prueba (el DAO le asigna el código generado)
+        Producto prueba = new Producto("Destornillador estrella 6\"", "Herramientas", 9500.0, 25);
+        boolean insertado = productoDAO.insertarProducto(prueba);
+        System.out.println("¿Producto insertado?: " + insertado + " | Código: " + prueba.getCodigo());
+        if (!insertado) {
+            return;
+        }
+        int codigoPrueba = prueba.getCodigo();
 
         // 2. Listar todos los productos
         System.out.println("\n--- Lista de productos ---");
@@ -27,13 +36,12 @@ public class Main {
             System.out.println(p);
         }
 
-        // 3. Consultar producto por código (dinámico)
-        int codigoPrueba = productos.get(0).getCodigo();
+        // 3. Consultar el producto de prueba por código
         Producto encontrado = productoDAO.consultarProductoPorCodigo(codigoPrueba);
         System.out.println("\nProducto encontrado: " +
                 (encontrado != null ? encontrado.getNombre() : "No existe"));
 
-        // 4. Actualizar producto
+        // 4. Actualizar el producto de prueba
         if (encontrado != null) {
             encontrado.setPrecio(23000.0);
             encontrado.setStock(15);
@@ -42,9 +50,8 @@ public class Main {
         }
 
         // ================= MÓDULO VENTAS =================
-        // Usamos un producto real y con stock disponible para la venta
-        List<Producto> productosDisponibles = productoDAO.consultarProductos();
-        Producto productoParaVenta = productosDisponibles.get(0);
+        // Se vende el mismo producto de prueba
+        Producto productoParaVenta = productoDAO.consultarProductoPorCodigo(codigoPrueba);
         int stockAntes = productoParaVenta.getStock();
 
         System.out.println("\n--- Prueba módulo Ventas ---");
@@ -54,7 +61,7 @@ public class Main {
         // 1. Registrar una venta de 2 unidades
         int cantidadVendida = 2;
         double totalVenta = productoParaVenta.getPrecio() * cantidadVendida;
-        Venta nuevaVenta = new Venta(productoParaVenta.getCodigo(), cantidadVendida, new Date(), totalVenta);
+        Venta nuevaVenta = new Venta(codigoPrueba, cantidadVendida, new Date(), totalVenta);
         boolean ventaRegistrada = ventaDAO.registrarVenta(nuevaVenta);
         System.out.println("¿Venta registrada?: " + ventaRegistrada);
 
@@ -71,13 +78,16 @@ public class Main {
             System.out.println(v);
         }
 
-        // 4. Eliminar la última venta registrada (dinámico)
-        int idVentaAEliminar = ventas.get(ventas.size() - 1).getIdVenta();
-        boolean ventaEliminada = ventaDAO.eliminarVenta(idVentaAEliminar);
-        System.out.println("\n¿Venta eliminada?: " + ventaEliminada);
+        // 4. Eliminar las ventas del producto de prueba
+        for (Venta v : ventas) {
+            if (v.getCodigoProducto() == codigoPrueba) {
+                boolean ventaEliminada = ventaDAO.eliminarVenta(v.getIdVenta());
+                System.out.println("\n¿Venta " + v.getIdVenta() + " eliminada?: " + ventaEliminada);
+            }
+        }
 
-        // ================= FIN PRUEBAS PRODUCTOS =================
-        // 5. Eliminar producto (dinámico) - al final, para no afectar la venta
+        // ================= FIN PRUEBAS =================
+        // 5. Eliminar el producto de prueba (al final, cuando ya no tiene ventas)
         boolean eliminado = productoDAO.eliminarProducto(codigoPrueba);
         System.out.println("\n¿Producto eliminado?: " + eliminado);
     }

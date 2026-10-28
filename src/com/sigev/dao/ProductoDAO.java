@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +21,12 @@ import java.util.List;
  */
 public class ProductoDAO {
 
-    // Inserta un nuevo producto en la base de datos
+    // Inserta un nuevo producto en la base de datos y le asigna el código generado
     public boolean insertarProducto(Producto producto) {
         String sql = "INSERT INTO producto (nombre, categoria, precio, stock) VALUES (?, ?, ?, ?)";
 
         try (Connection conexion = ConexionBD.obtenerConexion();
-             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+             PreparedStatement sentencia = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             sentencia.setString(1, producto.getNombre());
             sentencia.setString(2, producto.getCategoria());
@@ -33,6 +34,13 @@ public class ProductoDAO {
             sentencia.setInt(4, producto.getStock());
 
             int filasAfectadas = sentencia.executeUpdate();
+
+            // Código AUTO_INCREMENT que MySQL le dio al producto
+            try (ResultSet claves = sentencia.getGeneratedKeys()) {
+                if (claves.next()) {
+                    producto.setCodigo(claves.getInt(1));
+                }
+            }
             return filasAfectadas > 0;
 
         } catch (SQLException e) {
