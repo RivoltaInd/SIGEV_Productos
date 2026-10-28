@@ -1,2 +1,4 @@
 /dist/
 /src/db.properties
+/build/
+/nbproject/private/
